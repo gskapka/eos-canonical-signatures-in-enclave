@@ -1,0 +1,4 @@
+*.sw*
+**/logs
+**/target/
+rsync-script.sh
