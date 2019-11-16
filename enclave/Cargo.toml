@@ -11,29 +11,10 @@ crate-type = ["staticlib"]
 default = []
 
 [target.'cfg(not(target_env = "sgx"))'.dependencies]
-rand = { git = "https://github.com/mesalock-linux/rand-sgx", rev = "v0.6.5_sgx1.0.9" }
 sgx_types = { path = "../../../sgx_types" }
-sgx_tseal = { path = "../../../sgx_tseal" }
 sgx_tstd = { path = "../../../sgx_tstd" }
-libsecp256k1 = { path = "../../../libsecp256k1-rs-sgx" }
-
-[dependencies]
-serde = { git = "https://github.com/mesalock-linux/serde-sgx" }
-lazy_static = { version = "1.1.0", features = ["spin_no_std"] }
-serde_cbor = { git = "https://github.com/mesalock-linux/cbor-sgx" }
-serde_derive = { git = "https://github.com/mesalock-linux/serde-sgx" }
+rand = { git = "https://github.com/mesalock-linux/rand-sgx", rev = "v0.6.5_sgx1.0.9" }
+libsecp256k1 = { git = "https://github.com/provable-things/libsecp256k1-rs-sgx", branch = "eos-canonical-signatures" }
 
 [patch.'https://github.com/baidu/rust-sgx-sdk.git']
-sgx_alloc = { path = "../../../sgx_alloc" }
-sgx_backtrace_sys = { path = "../../../sgx_backtrace_sys" }
-sgx_build_helper = { path = "../../../sgx_build_helper" }
-sgx_demangle = { path = "../../../sgx_demangle" }
-sgx_libc = { path = "../../../sgx_libc" }
-sgx_tcrypto = { path = "../../../sgx_tcrypto" }
-sgx_tprotected_fs = { path = "../../../sgx_tprotected_fs" }
-sgx_trts = { path = "../../../sgx_trts" }
-sgx_tse = { path = "../../../sgx_tse" }
-sgx_tseal = { path = "../../../sgx_tseal" }
 sgx_tstd = { path = "../../../sgx_tstd" }
-sgx_types = { path = "../../../sgx_types" }
-sgx_unwind = { path = "../../../sgx_unwind" }
