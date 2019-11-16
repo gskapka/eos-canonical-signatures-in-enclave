@@ -3,42 +3,56 @@
 
 extern crate sgx_types;
 #[cfg(not(target_env = "sgx"))]
+
 #[macro_use]
 extern crate sgx_tstd as std;
+extern crate secp256k1;
+extern crate rand;
 
 use sgx_types::*;
+use rand::thread_rng;
+
+use secp256k1::{
+    verify,
+    Message,
+    SecretKey,
+    PublicKey,
+    sign_canonical_for_eos,
+};
 
 #[no_mangle]
 pub extern "C" fn run_sample() -> sgx_status_t {
-    println!("✔ Running sample inside enclave...");
+    println!("✔ Running canonical signature sample inside enclave...");
+    let private_key = SecretKey::random(&mut thread_rng());
+    println!("✔ Private key generated successfully!");
+    let public_key = PublicKey::from_secret_key(&private_key);
+    println!("✔ Public key generated successfully!");
+    let message_arr: [u8; 32] = [6; 32];
+    let message = Message::parse_slice(&message_arr)
+        .unwrap();
+    println!(
+        "✔ Message generated successfully!\n{}",
+        "✔ Signing message..."
+    );
+    let (canonical_signature, recovery_id) = sign_canonical_for_eos(
+        &message,
+        &private_key,
+    );
+    println!(
+        "✔ Message signed successfully!\n{}",
+        "✔ Verifying siganture...");
+    let signature_is_verified = verify(
+        &message,
+        &canonical_signature,
+        &public_key,
+    );
+    println!("✔ Signature is verified: {}", signature_is_verified);
+    let signature_is_canonical = canonical_signature
+        .is_canonical_for_eos();
+    println!(
+        "✔ Signature recovery ID: {:?}\n✔ Signature is canonical: {}",
+        recovery_id,
+        signature_is_canonical
+    );
     sgx_status_t::SGX_SUCCESS
-    /*
-    let mut key: [u8; 3] = [107, 101, 121]; // NOTE: b"key";
-    pub const MEGA_BYTE: usize = 1_000_000;
-    pub const U32_BYTES: usize = 4;
-    let value_size = 1 * MEGA_BYTE;
-    let key_size = 3;
-    let key_pointer: *mut u8 = &mut key[0];
-    let mut value: Vec<u8> = vec![0; value_size];
-    let value_pointer: *mut u8 = &mut value[0];
-    println!("✔ Value before: {:?}", &value[..20]);
-    let res = unsafe {
-        get_from_db(
-            &mut sgx_status_t::SGX_SUCCESS,
-            key_pointer,
-            key_size as *const u32,
-            value_pointer,
-            value_size as *const u32,
-        )
-    };
-    println!("✔ Res after: {:?}", res);
-    println!("✔ Value after: {:?}", &value[..20]);
-    let mut length_of_data_arr = [0u8; U32_BYTES];
-    let bytes = &value[..length_of_data_arr.len()];
-    length_of_data_arr.copy_from_slice(bytes);
-    let length_of_data = u32::from_le_bytes(length_of_data_arr) as usize;
-    println!("✔ Length of data as u32: {:?}", length_of_data);
-    let final_data = &value[U32_BYTES..U32_BYTES + length_of_data];
-    println!("✔ Final data: {:?}", final_data);
-    */
 }
