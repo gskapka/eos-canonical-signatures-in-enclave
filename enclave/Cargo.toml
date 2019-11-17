@@ -1,0 +1,20 @@
+[package]
+name = "EosCanonicalSignaturesInEnclave"
+version = "1.0.0"
+authors = ["Greg Kapka"]
+
+[lib]
+name = "eos_canonical_signatures_in_enclave"
+crate-type = ["staticlib"]
+
+[features]
+default = []
+
+[target.'cfg(not(target_env = "sgx"))'.dependencies]
+sgx_types = { path = "../../../sgx_types" }
+sgx_tstd = { path = "../../../sgx_tstd" }
+rand = { git = "https://github.com/mesalock-linux/rand-sgx", rev = "v0.6.5_sgx1.0.9" }
+libsecp256k1 = { git = "https://github.com/provable-things/libsecp256k1-rs-sgx", branch = "eos-canonical-signatures" }
+
+[patch.'https://github.com/baidu/rust-sgx-sdk.git']
+sgx_tstd = { path = "../../../sgx_tstd" }
